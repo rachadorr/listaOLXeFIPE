@@ -6,11 +6,45 @@ from time import sleep
 
 
 service = Service(ChromeDriverManager().install())
-nav = webdriver.Chrome(service=service)
+
+options = webdriver.ChromeOptions()
+
+options.add_experimental_option('excludeSwitches', ['enable-logging'])
+
+nav = webdriver.Chrome(service=service,options=options)
 nav.get('https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/estado-rs?sf=1&o=1')
-req = nav.find_elements(By.CLASS_NAME, 'sc-giYglK iODuKY horizontal')
-for element in req:
-    print(element.get_attribute("outerHTML"))
+print("Carregou a pagina e espera 4 segundos")
+sleep(4)
+print("Carregou a pagina e esperou 4 segundos")
+lista = []
+nav.maximize_window() 
+for i in range(3,55+1):
+    try:
+        nav.execute_script("window.scrollBy(0,250)","")
+        sleep(3)
+        print("Carregou a pagina e esperou 3 segundos")
+        url = '//*[@id="main-content"]/div['+str(i)+']/section/a'
+        print(f'Carregou essa URL: {url}')
+        sleep(2)
+        req = nav.find_element(By.XPATH, url)
+        v = (req.get_attribute("href"))
+        print('passou')
+        print(f'Carregou essa carro: {v}')
+        lista.append(v)
+
+
+
+    except:
+        None
+
+print("Buscou o elemento")
+print(lista)
+#print(req.get_attribute("outerHTML"))
+#print(req.get_attribute("href"))
+#for element in req:
+#    print(element.get_attribute("outerHTML"))
+#    print(element.get_attribute("href"))
+#    #print(element)
     
 
 #site= 'https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/estado-rs?sf=1&o=1'
