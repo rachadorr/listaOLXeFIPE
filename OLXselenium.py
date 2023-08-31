@@ -4,6 +4,16 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from time import sleep
 
+from dotenv import load_dotenv
+load_dotenv()
+import os
+from supabase import create_client
+
+url = os.environ.get("SUPABASE_URL")
+key = os.environ.get("SUPABASE_KEY")
+supabase = create_client(url, key)
+
+
 
 service = Service(ChromeDriverManager().install())
 
@@ -12,30 +22,37 @@ options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
 nav = webdriver.Chrome(service=service,options=options)
-nav.get('https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/estado-rs?sf=1&o=1')
-print("Carregou a pagina e espera 4 segundos")
-sleep(4)
-print("Carregou a pagina e esperou 4 segundos")
+#nav.get('https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/estado-rs?sf=1&o=1')
+#print("Carregou a pagina e espera 4 segundos")
+#sleep(4)
+#print("Carregou a pagina e esperou 4 segundos")
 lista = []
-nav.maximize_window() 
-for i in range(3,55+1):
-    try:
-        nav.execute_script("window.scrollBy(0,250)","")
-        sleep(3)
-        print("Carregou a pagina e esperou 3 segundos")
-        url = '//*[@id="main-content"]/div['+str(i)+']/section/a'
-        print(f'Carregou essa URL: {url}')
-        sleep(2)
-        req = nav.find_element(By.XPATH, url)
-        v = (req.get_attribute("href"))
-        print('passou')
-        print(f'Carregou essa carro: {v}')
-        lista.append(v)
+#nav.maximize_window() 
+def leCarros():
+        for i in range(3,55+1):
+            try:
+                nav.execute_script("window.scrollBy(0,270)","")
+                sleep(3)
+                #print("Carregou a pagina e esperou 3 segundos")
+                url = '//*[@id="main-content"]/div['+str(i)+']/section/a'
+                print(f'Carregou essa URL: {url}')
+                sleep(1)
+                req = nav.find_element(By.XPATH, url)
+                v = (req.get_attribute("href"))
+                #print('passou')
+                #print(f'Carregou essa carro: {v}')
+                lista.append(v)
+            except:
+                None
+print(lista)
 
-
-
-    except:
-        None
+for i in range(1,3):
+    nav.get('https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/estado-rs?sf=1&o='+str(i)+'')
+    print("Carregou a pagina e espera 4 segundos")
+    sleep(4)
+    print("Carregou a pagina e esperou 4 segundos")
+    nav.maximize_window() 
+    leCarros()
 
 print("Buscou o elemento")
 print(lista)
