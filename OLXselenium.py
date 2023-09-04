@@ -16,18 +16,29 @@ supabase = create_client(url, key)
 
 
 service = Service(ChromeDriverManager().install())
-
+#
 options = webdriver.ChromeOptions()
-
+#
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
+#data = supabase.table('Veiculo').select("*").execute()
+#print(type(data))
+#print(data)
+#carro = 'https://rs.olx.com.br/regioes-de-porto-alegre-torres-e-santa-cruz-do-sul/autos-e-pecas/carros-vans-e-utilitarios/tracker-lt-1-0-turbo-22-23-1215981091'
+#carro = carro.split("/")[-1]
+#print (carro)
+#print (carro.split("-")[-1])
+
+
+
 nav = webdriver.Chrome(service=service,options=options)
-#nav.get('https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/estado-rs?sf=1&o=1')
-#print("Carregou a pagina e espera 4 segundos")
-#sleep(4)
-#print("Carregou a pagina e esperou 4 segundos")
+nav.maximize_window() 
+
+nav.get('https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/estado-rs?sf=1&o=1')
+print("Carregou a pagina e espera 4 segundos")
+sleep(4)
+print("Carregou a pagina e esperou 4 segundos")
 lista = []
-#nav.maximize_window() 
 def leCarros():
         for i in range(3,55+1):
             try:
@@ -35,25 +46,26 @@ def leCarros():
                 sleep(3)
                 #print("Carregou a pagina e esperou 3 segundos")
                 url = '//*[@id="main-content"]/div['+str(i)+']/section/a'
-                print(f'Carregou essa URL: {url}')
-                sleep(1)
+                #print(f'Carregou essa URL: {url}')
+                sleep(2)
                 req = nav.find_element(By.XPATH, url)
                 v = (req.get_attribute("href"))
                 #print('passou')
-                #print(f'Carregou essa carro: {v}')
+                print(f'Carregou essa carro: {v}')
+                supabase.table('Veiculo').insert({"veiculo":(v.split("/")[-1]),"codigo":(v.split("-")[-1]), "link":(v)}).execute()
                 lista.append(v)
             except:
                 None
-print(lista)
+#print(lista)
 
 for i in range(1,3):
     nav.get('https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/estado-rs?sf=1&o='+str(i)+'')
     print("Carregou a pagina e espera 4 segundos")
     sleep(4)
     print("Carregou a pagina e esperou 4 segundos")
-    nav.maximize_window() 
+    #nav.maximize_window() 
     leCarros()
-
+#
 print("Buscou o elemento")
 print(lista)
 #print(req.get_attribute("outerHTML"))
